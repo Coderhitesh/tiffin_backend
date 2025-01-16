@@ -5,11 +5,12 @@ const cors = require('cors');
 const db = require('./db/db');
 const Router = require('./routes/routes');
 const multer = require('multer');
-
+const cookies = require('cookie-parser')
 // Middleware
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookies());
 
 const PORT = process.env.PORT || 9879;
 console.log("PORT:", PORT);

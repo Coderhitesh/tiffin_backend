@@ -13,12 +13,14 @@ const {  createVendor,
     getVendorById,
     updateVendor,
     deleteVendor,
-    loginVendor, } = require('../controllers/vendor.controller');
+    loginVendor,
+    getMyDetails, } = require('../controllers/vendor.controller');
 const { createTiffinPlan,
     getAllTiffinPlans,
     getTiffinPlanById,
     updateTiffinPlan,
     deleteTiffinPlan, } = require('../controllers/customTiffine.controller');
+const  protect  = require('../Middleware/Protect');
 const upload = multer({ dest: 'uploads/' });
 
 Router.post('/create_user', createUser)
@@ -52,6 +54,7 @@ Router.put('/vendor/:id', upload.fields([
 ]), updateVendor);
 Router.delete('/vendor/:id', deleteVendor);
 Router.post('/login',loginVendor)
+Router.get('/find_vendor',protect,getMyDetails)
 
 // custom tiffin rote here 
 

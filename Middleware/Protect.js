@@ -1,43 +1,42 @@
 const jwt = require('jsonwebtoken');
 
-exports.protect = async (req, res, next) => {
+const protect = async (req, res, next) => {
   try {
-    // Extract the token from various sources (cookies, body, headers)
+    // Extract the token from cookies, body, or headers
     const token =
       req.cookies.token || req.body.token || (req.headers.authorization ? req.headers.authorization.replace('Bearer ', '') : '');
-    // console.log(token)
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Please Login to Access this',
+        message: 'Please log in to access this',
       });
     }
 
     try {
       // Verify the token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
-      // Attach the decoded user information to the request object
-      req.user = decoded; 
-      
-      // Move to the next middleware or route handler
-      next(); 
+
+      // Attach user ID from the decoded token to the request
+      req.user = { id: decoded.id };
+
+      next(); // Move to the next middleware or route handler
     } catch (error) {
-      // Log the specific error for debugging
       console.error('JWT Verification Error:', error.message);
-      
+
       return res.status(401).json({
         success: false,
         message: 'Invalid token',
       });
     }
- 
   } catch (error) {
-    // Handle any unexpected errors
-    console.error('Internal Server Error:', error.message);
+    console.error('Internal Server Error:', error);
+    
+
     res.status(500).json({
       success: false,
-      message: 'Internal Server Error',
+      message: 'Internal server error',
     });
   }
 };
+
+module.exports = protect

@@ -78,6 +78,7 @@ exports.getVendorById = async (req, res) => {
 // Update a Vendor
 exports.updateVendor = async (req, res) => {
     try {
+        console.log("body",req.body)
         const { name, email, category, address } = req.body;
         const vendor = await Vendor.findById(req.params.id);
 
@@ -169,7 +170,7 @@ exports.loginVendor = async (req, res) => {
             })
         }
 
-        await sendToken(vendor,res,200)
+        await sendToken(vendor, res, 200)
 
 
     } catch (error) {
@@ -181,3 +182,30 @@ exports.loginVendor = async (req, res) => {
         })
     }
 }
+
+exports.getMyDetails = async (req, res) => {
+    try {
+        const id = req.user.id; // Get the user ID from req.user
+        const vendor = await Vendor.findById(id).populate('category');
+
+        if (!vendor) {
+            return res.status(404).json({
+                success: false,
+                message: 'Vendor not found',
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Vendor found successfully',
+            data: vendor,
+        });
+    } catch (error) {
+        console.error('Internal server error in finding vendor:', error);
+
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
